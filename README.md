@@ -1,13 +1,13 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18889224.svg)](https://doi.org/10.5281/zenodo.18889224)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-17%2F17%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-47%2F47%20passed-brightgreen.svg)](#tests)
 
 # QKD Krylov Detector
 
-A three-layer eavesdropper detection framework for Quantum Key Distribution (QKD) based on **Krylov complexity** and **sidereal filtering**.
+A comprehensive eavesdropper detection framework for Quantum Key Distribution (QKD) based on **Krylov complexity** and **sidereal filtering**.
 
-This package implements the methods from a series of seven research papers by Daniel Süß, providing a complete pipeline from raw QBER time series to Eve detection with ROC analysis.
+This package implements the methods from a series of seven research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis.
 
 ---
 
@@ -23,13 +23,26 @@ The left panel shows the **Krylov detection score** over time. The green line (c
 
 ## Overview
 
-The detector operates in three layers:
+### Core Detection Pipeline (3 Layers)
 
 | Layer | Module | Function | Paper |
 |-------|--------|----------|-------|
 | **1** | `sidereal_filter` | Remove 23.93h sidereal and 24.0h diurnal periodicities | [1], [2], [3] |
 | **2** | `lanczos_extractor` | Compute Krylov b_n coefficients via Lanczos algorithm | [4], [6] |
 | **3** | `template_detector` | Match QBER autocorrelation against Gaussian template | [5], [6] |
+
+### Extended Modules
+
+| Module | Function | Paper |
+|--------|----------|-------|
+| `bb84_simulation` | BB84 protocol simulation (clean, IR, BS, partial attacks) | [5] Part I |
+| `attack_classifier` | Multi-attack classification (IR/BS/Blinding/PNS) + CUSUM + spectral anomaly | [5] Part II |
+| `calibration` | Calibrated slope detector + Option B slope fingerprint | [6] Sec. III |
+| `qber_simulator` | QBER time series (idealized + realistic noise models) | [5] |
+| `spectral_analysis` | ⟨r⟩ ratio and regime classification | [4] |
+| `hamiltonian` | Dense Heisenberg chain (QuTiP, N ≤ 8) | [4], [5] |
+| `sparse_hamiltonian` | Sparse Hamiltonian for finite-size scaling (N > 8) | [4] Sec. III |
+| `pulsar_analysis` | Partial F-test framework for pulsar timing validation | [3] |
 
 ---
 
@@ -45,10 +58,16 @@ For NANOGrav pulsar timing validation:
 pip install qkd-krylov-detector[pulsar]
 ```
 
+For ML-based attack classification:
+
+```bash
+pip install qkd-krylov-detector[ml]
+```
+
 For development:
 
 ```bash
-git clone https://github.com/danielsuess/qkd-krylov-detector.git
+git clone https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector.git
 cd qkd-krylov-detector
 pip install -e ".[dev]"
 ```
@@ -90,20 +109,25 @@ print(f"AUC = {auc:.4f}")
 
 ```
 qkd_krylov_detector/
-├── __init__.py              # Public API exports
-├── hamiltonian.py           # 8-qubit Heisenberg chain construction
+├── __init__.py              # Public API exports (all 11 modules)
+├── hamiltonian.py           # Dense 8-qubit Heisenberg chain (QuTiP)
+├── sparse_hamiltonian.py    # Sparse Hamiltonian for N > 8 (scipy)
 ├── lanczos_extractor.py     # Layer 2: Lanczos algorithm for b_n
 ├── sidereal_filter.py       # Layer 1: FFT notch filter + irregular LS fit
 ├── template_detector.py     # Layer 3: Gaussian template matching + ROC
+├── bb84_simulation.py       # BB84 protocol (clean/IR/BS/partial)
+├── attack_classifier.py     # Multi-attack classification + CUSUM + spectral
+├── calibration.py           # Calibrated slope detector + Option B
 ├── qber_simulator.py        # QBER generation (idealized + realistic noise)
-└── spectral_analysis.py     # ⟨r⟩ ratio and regime classification
+├── spectral_analysis.py     # ⟨r⟩ ratio and regime classification
+└── pulsar_analysis.py       # Partial F-test for pulsar timing
 ```
 
 ---
 
 ## Modules
 
-### `hamiltonian` — System Hamiltonian
+### `hamiltonian` — System Hamiltonian (Dense)
 
 Constructs the symmetry-broken Heisenberg chain used throughout all papers:
 
@@ -124,9 +148,13 @@ Default parameters (Regime II, crossover ⟨r⟩ ≈ 0.366):
 
 **Important:** The system is in the crossover regime, NOT full GOE chaos. See Paper [4], Section II.
 
+### `sparse_hamiltonian` — Sparse Hamiltonian (N > 8)
+
+Identical Hamiltonian structure using scipy sparse matrices, enabling eigenvalue computations for N > 8 qubits. Provides `spectral_statistics_sparse()` for finite-size scaling of ⟨r⟩ and `finite_size_scaling()` for automated multi-N scans. Validated to match the dense QuTiP Hamiltonian exactly at N = 6. See Paper [4], Section III.
+
 ### `sidereal_filter` — Layer 1
 
-The module provides two methods. `sidereal_filter()` is an FFT-based notch filter for uniformly sampled data, while `sidereal_filter_irregular()` uses a least-squares sinusoidal fit for irregularly sampled data such as pulsar timing observations. The irregular method was validated on the NANOGrav 15-year dataset (59,389 TOAs, PSR J1713+0747). See Paper [3].
+Two methods: `sidereal_filter()` (FFT-based notch filter for uniform sampling) and `sidereal_filter_irregular()` (least-squares sinusoidal fit for irregular sampling). The irregular method was validated on the NANOGrav 15-year dataset (59,389 TOAs, PSR J1713+0747). See Paper [3].
 
 ### `lanczos_extractor` — Layer 2
 
@@ -147,26 +175,56 @@ This provides the theoretical template for Layer 3.
 
 ### `template_detector` — Layer 3
 
-The detector performs sliding-window template matching: for each window of the QBER residuum, it computes the empirical autocorrelation, compares it against the Gaussian template derived from b_n, and returns the RMSE as a detection score. Clean channels match the template (low score), while Eve-compromised channels deviate (high score).
+Sliding-window template matching: for each window of the QBER residuum, computes the empirical autocorrelation, compares it against the Gaussian template derived from b_n, and returns the RMSE as a detection score. Clean channels match the template (low score), while Eve-compromised channels deviate (high score).
 
-Additional functions include `krylov_proxy()` for higher-moment analysis (kurtosis + skewness), `compute_roc()` and `compute_auc()` for ROC analysis, and `compute_separation()` for σ-separation between score distributions.
+Additional functions: `krylov_proxy()` for higher-moment analysis (kurtosis + skewness), `compute_roc()` and `compute_auc()` for ROC analysis, and `compute_separation()` for σ-separation between score distributions.
+
+### `bb84_simulation` — BB84 Protocol
+
+Full qubit-level BB84 simulation with four modes:
+
+| Function | Attack Type | QBER Effect |
+|----------|-------------|-------------|
+| `bb84_clean()` | No attack | ~1% (channel noise only) |
+| `bb84_intercept_resend()` | Intercept-Resend | +p × 25% |
+| `bb84_beam_splitting()` | Beam-Splitting | Transmission drops by p |
+| `bb84_window()` | Combined IR + BS | Per-window simulation |
+
+`make_bb84_timeseries()` generates complete QBER + transmission time series with burst attack windows and environmental drift. See Paper [5], Part I.
+
+### `attack_classifier` — Multi-Attack Classification
+
+Five attack types with realistic noise models:
+
+| Label | Attack | Observable Signature |
+|-------|--------|---------------------|
+| 0 | Clean | Baseline noise only |
+| 1 | Intercept-Resend (IR) | QBER spike + slight photon drop |
+| 2 | Beam-Splitting (BS) | Photon count drop, minimal QBER change |
+| 3 | Detector Blinding | Periodic QBER spikes + photon surges |
+| 4 | Photon-Number-Splitting (PNS) | Low-count photon clipping |
+
+Includes `extract_features()` (55-dimensional feature vector), `find_attack_window()` (KS-test based), `cusum_detect()` (two-sided CUSUM change-point detection), and `spectral_anomaly_score()` (Welch periodogram). See Paper [5], Part II.
+
+### `calibration` — Calibrated Detector + Option B
+
+Two alternative detection methods based on Gaussian slope fitting:
+
+1. **Calibrated Detector** (`calibrate()` + `calibrated_detect()`): Calibrates the expected autocorrelation slope from clean data, then scores deviations.
+2. **Option B** (`krylov_slope_detector()`): Fits a free Gaussian to each window's autocorrelation and computes the relative deviation from the theoretical b_n slope.
+
+See Paper [6], Section III.
 
 ### `qber_simulator` — QBER Generation
 
-Two noise models are provided:
+Two noise models:
 
 | Model | Components | Source |
 |-------|-----------|--------|
 | **Idealized** | Gaussian white noise + sidereal/diurnal drift | krylov_dynamic_detector.ipynb |
 | **Realistic** | AR(1) + 1/f + afterpulsing + burst noise | krylov_robustness_test.ipynb |
 
-Three Eve attack models are implemented:
-
-| Attack | Description | Source |
-|--------|-------------|--------|
-| `iid` | Classical intercept-resend | Paper [5], Part I |
-| `exponential` | Asymmetric exponential distribution | eve_detection_master_v3.ipynb |
-| `hamiltonian` | Coupling perturbation γ·σx(1)σx(2) | eve_detection_master_v3.ipynb |
+Three Eve attack models: `iid` (classical intercept-resend), `exponential` (asymmetric distribution), `hamiltonian` (coupling perturbation γ·σx(1)σx(2)).
 
 ### `spectral_analysis` — Spectral Statistics
 
@@ -178,11 +236,28 @@ Computes the mean ratio of consecutive level spacings ⟨r⟩:
 | **This system** | **0.366** | **Crossover** |
 | Fully chaotic | 0.536 | GOE |
 
+### `pulsar_analysis` — Pulsar Timing Validation
+
+Partial F-test framework for detecting sidereal signals in pulsar timing residuals:
+
+| Function | Purpose |
+|----------|---------|
+| `make_design_matrix()` | Annual + sidereal sinusoidal terms |
+| `partial_f_test()` | F-statistic, p-value, amplitude, SNR |
+| `classify_gaps()` | Diurnal vs. stochastic gap classification |
+| `compute_sidereal_amplitude()` | Extract amplitude from fitted coefficients |
+
+Validated on NANOGrav 15-year dataset (PSR J1713+0747, 59,389 TOAs). See Paper [3].
+
 ---
 
 ## Examples
 
-The `examples/` directory contains three scripts that demonstrate the framework at different levels of detail. `quickstart.py` is a minimal 20-line detection demo. `full_pipeline.py` runs the complete three-layer pipeline with ROC analysis and generates publication-quality plots. `nanograv_validation.py` demonstrates the sidereal filter validation on synthetic pulsar timing data modeled after the NANOGrav 15-year dataset.
+The `examples/` directory contains three scripts:
+
+- `quickstart.py` — Minimal 20-line detection demo
+- `full_pipeline.py` — Complete three-layer pipeline with ROC analysis and publication-quality plots
+- `nanograv_validation.py` — Sidereal filter validation on synthetic pulsar timing data
 
 ---
 
@@ -192,7 +267,18 @@ The `examples/` directory contains three scripts that demonstrate the framework 
 pytest tests/ -v
 ```
 
-The test suite (17 tests) validates Hamiltonian construction (dimensions, Hermiticity, Eve perturbation), Lanczos coefficients (positivity, linear growth, Eve deviation), theoretical autocorrelation (Gaussian shape, normalization), sidereal filter (drift removal, signal preservation), QBER simulator (all noise models and Eve types), template detector (score computation, Eve discrimination), ROC/AUC computation, and spectral analysis (⟨r⟩ ≈ 0.366, crossover classification).
+The test suite (**47 tests**) validates:
+
+- **Hamiltonian**: dimensions, Hermiticity, Eve perturbation (dense + sparse, cross-validated)
+- **Lanczos**: positivity, linear growth, Eve deviation
+- **Sidereal filter**: drift removal, signal preservation
+- **Template detector**: score computation, Eve discrimination, ROC/AUC
+- **BB84 simulation**: clean QBER, IR/BS attacks, time series generation
+- **Attack classifier**: all 5 attack types, feature extraction, CUSUM, spectral anomaly
+- **Calibration**: Gaussian AC, slope fitting, calibration, Option B detector
+- **Sparse Hamiltonian**: shape, Hermiticity, dense/sparse agreement, ⟨r⟩ crossover
+- **Pulsar analysis**: design matrix, F-test (signal/noise), gap classification
+- **Spectral analysis**: ⟨r⟩ ≈ 0.366, crossover classification
 
 ---
 
@@ -254,6 +340,22 @@ Each function in this package traces back to a specific notebook cell:
 | `make_clean_qber()` | krylov_dynamic_detector.ipynb | Cell 2 |
 | `make_realistic_clean_qber()` | krylov_robustness_test.ipynb | Cell 4 |
 | `compute_r_ratio()` | eve_detection_master_v3.ipynb | Cell 4 |
+| `bb84_clean()` | bb84_eve_classification.ipynb | Cell 1 |
+| `bb84_intercept_resend()` | bb84_eve_classification.ipynb | Cell 1 |
+| `bb84_beam_splitting()` | bb84_eve_classification.ipynb | Cell 1 |
+| `make_bb84_timeseries()` | bb84_process_level.ipynb | Cell 2 |
+| `cusum_detect()` | bb84_process_level.ipynb | Cell 3 |
+| `spectral_anomaly_score()` | bb84_process_level.ipynb | Cell 5 |
+| `extract_features()` | eve_attack_classifier_v7.ipynb | Cell 4 |
+| `find_attack_window()` | eve_attack_classifier_v7.ipynb | Cell 3 |
+| `make_ir()` / `make_bs()` / `make_blinding()` / `make_pns()` | eve_attack_classifier_v7.ipynb | Cell 2 |
+| `fit_slope()` | krylov_calibrated_detector.ipynb | Cell 4 |
+| `calibrate()` | krylov_calibrated_detector.ipynb | Cell 5 |
+| `krylov_slope_detector()` | krylov_option_b.ipynb | Cell 4 |
+| `build_hamiltonian_sparse()` | krylov_sparse_scaling.ipynb | Cell 1 |
+| `spectral_statistics_sparse()` | krylov_sparse_scaling.ipynb | Cell 2 |
+| `partial_f_test()` | pulsar_sidereal_colab-1.ipynb | Cell 5 |
+| `classify_gaps()` | pulsar_sidereal_colab-1.ipynb | Cell 4 |
 
 ---
 
@@ -270,12 +372,13 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
 ```bibtex
 @software{suess2026qkd,
   author    = {Süß, Daniel},
-  title     = {QKD Krylov Detector: Three-Layer Eavesdropper Detection
+  title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
+  version   = {1.1.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
-  url       = {https://doi.org/10.5281/zenodo.18889224}
+  url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}
 }
 ```
 

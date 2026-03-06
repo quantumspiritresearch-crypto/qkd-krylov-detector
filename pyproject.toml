@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qkd-krylov-detector"
-version = "1.0.0"
-description = "Three-layer eavesdropper detection for QKD based on Krylov complexity and sidereal filtering"
+version = "1.1.0"
+description = "Comprehensive eavesdropper detection framework for QKD — BB84 simulation, multi-attack classification, Krylov complexity, and sidereal filtering"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -45,15 +45,18 @@ pulsar = [
     "astropy>=5.0",
     "statsmodels>=0.13",
 ]
+ml = [
+    "scikit-learn>=1.0",
+]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/danielsuess/qkd-krylov-detector"
-Documentation = "https://github.com/danielsuess/qkd-krylov-detector#readme"
-Issues = "https://github.com/danielsuess/qkd-krylov-detector/issues"
+Homepage = "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector"
+Documentation = "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector#readme"
+Issues = "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector/issues"
 
 [tool.setuptools.packages.find]
 include = ["qkd_krylov_detector*"]
