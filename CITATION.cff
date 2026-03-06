@@ -1,0 +1,72 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "QKD Krylov Detector: Three-Layer Eavesdropper Detection for Quantum Key Distribution"
+type: software
+authors:
+  - family-names: "Süß"
+    given-names: "Daniel"
+    orcid: ""
+version: "1.0.0"
+date-released: "2026-03-06"
+license: MIT
+repository-code: "https://github.com/danielsuess/qkd-krylov-detector"
+url: "https://doi.org/10.5281/zenodo.18889224"
+abstract: >-
+  A three-layer eavesdropper detection framework for Quantum Key
+  Distribution (QKD) based on Krylov complexity and sidereal filtering.
+  Layer 1 removes sidereal and diurnal periodicities from the QBER time
+  series. Layer 2 extracts Lanczos coefficients to build a Gaussian
+  autocorrelation template. Layer 3 performs sliding-window template
+  matching to detect deviations caused by eavesdropping. Achieves
+  AUC up to 0.9989 under realistic hardware noise.
+keywords:
+  - quantum key distribution
+  - QKD
+  - Krylov complexity
+  - Lanczos algorithm
+  - eavesdropper detection
+  - quantum scrambling
+  - sidereal filtering
+references:
+  - type: article
+    title: "Deconvolution of Sidereal and Diurnal Periodicities in QKD"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18701222"
+  - type: article
+    title: "Dual-Layer Sidereal Detection Framework v2"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18768750"
+  - type: article
+    title: "Real-Data Validation on NANOGrav 15-Year Dataset"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18792775"
+  - type: article
+    title: "Scrambling vs. Recurrence: Microscopic Origin of the Quantum Arrow of Time"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18813710"
+  - type: article
+    title: "QKD Eve Detector: A Unified Framework — Parts I–III"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18873824"
+  - type: article
+    title: "Quantum Scrambling as a Cryptographic Resource"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18889224"

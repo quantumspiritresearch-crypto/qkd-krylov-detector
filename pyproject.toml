@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qkd-krylov-detector"
+version = "1.0.0"
+description = "Three-layer eavesdropper detection for QKD based on Krylov complexity and sidereal filtering"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Daniel Süß"}
+]
+requires-python = ">=3.9"
+keywords = [
+    "quantum-key-distribution",
+    "QKD",
+    "krylov-complexity",
+    "lanczos",
+    "eavesdropper-detection",
+    "quantum-scrambling",
+    "sidereal-filter",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "qutip>=4.7",
+    "matplotlib>=3.5",
+]
+
+[project.optional-dependencies]
+pulsar = [
+    "pint-pulsar>=0.9",
+    "astropy>=5.0",
+    "statsmodels>=0.13",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/danielsuess/qkd-krylov-detector"
+Documentation = "https://github.com/danielsuess/qkd-krylov-detector#readme"
+Issues = "https://github.com/danielsuess/qkd-krylov-detector/issues"
+
+[tool.setuptools.packages.find]
+include = ["qkd_krylov_detector*"]
