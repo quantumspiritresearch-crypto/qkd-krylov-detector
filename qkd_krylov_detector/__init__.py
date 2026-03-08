@@ -19,6 +19,9 @@ Extended Modules:
     hamiltonian         — Dense Heisenberg chain Hamiltonian (QuTiP, N ≤ 8)
     sparse_hamiltonian  — Sparse Hamiltonian for finite-size scaling (N > 8)
     pulsar_analysis     — Partial F-test framework for pulsar timing validation
+    quantum_eve         — Quantum Eve simulation (reduced autocorrelation, 4 strategies)
+    krylov_bridge       — Krylov-Statistical Bridge (b_n deviation ↔ QBER statistics)
+    demo_framework      — OOP wrappers (SiderealFilter, KrylovEngine, scenarios)
 
 References:
     [1] D. Süß, "Deconvolution of Sidereal and Diurnal Periodicities in QKD,"
@@ -38,7 +41,7 @@ Author: Daniel Süß
 License: MIT
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Daniel Süß"
 
 # Core Detection Pipeline
@@ -87,6 +90,28 @@ from .sparse_hamiltonian import (
 from .pulsar_analysis import (
     make_design_matrix, partial_f_test,
     classify_gaps, compute_sidereal_amplitude
+)
+
+# Quantum Eve Simulation
+from .quantum_eve import (
+    build_total_hamiltonian, build_channel_hamiltonian,
+    compute_channel_autocorrelation, compute_reduced_autocorrelation,
+    gaussian_template,
+    make_classical_eve_qber, make_quantum_eve_qber,
+    compute_anomaly_scores, compute_eve_detection_stats,
+    STRATEGIES
+)
+
+# Krylov-Statistical Bridge
+from .krylov_bridge import (
+    bn_deviation, sim_stats, gamma_sweep,
+    sensitivity_vs_gamma, krylov_proxy
+)
+
+# Demo Framework (OOP wrappers)
+from .demo_framework import (
+    SiderealFilter, KrylovEngine,
+    classify_window, make_scenario
 )
 
 __all__ = [
@@ -145,4 +170,26 @@ __all__ = [
     "partial_f_test",
     "classify_gaps",
     "compute_sidereal_amplitude",
+    # Quantum Eve
+    "build_total_hamiltonian",
+    "build_channel_hamiltonian",
+    "compute_channel_autocorrelation",
+    "compute_reduced_autocorrelation",
+    "gaussian_template",
+    "make_classical_eve_qber",
+    "make_quantum_eve_qber",
+    "compute_anomaly_scores",
+    "compute_eve_detection_stats",
+    "STRATEGIES",
+    # Krylov Bridge
+    "bn_deviation",
+    "sim_stats",
+    "gamma_sweep",
+    "sensitivity_vs_gamma",
+    "krylov_proxy",
+    # Demo Framework
+    "SiderealFilter",
+    "KrylovEngine",
+    "classify_window",
+    "make_scenario",
 ]
