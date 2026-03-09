@@ -7,7 +7,7 @@
 
 A comprehensive eavesdropper detection framework for Quantum Key Distribution (QKD) based on **Krylov complexity** and **sidereal filtering**.
 
-This package implements the methods from a series of seven research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis.
+This package implements the methods from a series of eight research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis.
 
 ---
 
@@ -306,6 +306,17 @@ Scaling law (from Paper [4]):
 
 Critical crossover at ⟨r⟩ = 0.366 (GOE statistics threshold).
 
+Formal security results (from Paper [7]):
+
+| Result | Statement |
+|--------|-----------|
+| Krylov Locality (Theorem 1) | First *d* Lanczos coefficients exactly protected — algebraic identity |
+| Perturbation Detectability (Theorem 3) | First affected coefficient scales as γ² with computable bounds |
+| Information-Distortion Bound (Prop. 3) | Holevo quantity χ ~ γ², distortion Δ_K ~ γ⁴, tradeoff χ ≤ const·√Δ_K |
+| Krylov Unforgeability (Theorem 5) | No physically realizable attack can extract information without detection |
+| Coherent Attack Invariance (Theorem 6) | Lanczos coefficients are state-independent — coherent attacks cannot help |
+| Time-Dependent Unforgeability (Theorem 7) | Time-varying coupling produces strictly more distortion (Jensen inequality) |
+
 ---
 
 ## Paper References
@@ -318,6 +329,9 @@ Critical crossover at ⟨r⟩ = 0.366 (GOE statistics threshold).
 | [4] | Scrambling vs. Recurrence: Microscopic Origin of the Quantum Arrow of Time | [10.5281/zenodo.18813710](https://doi.org/10.5281/zenodo.18813710) |
 | [5] | QKD Eve Detector: A Unified Framework — Parts I–III | [10.5281/zenodo.18873824](https://doi.org/10.5281/zenodo.18873824) |
 | [6] | Quantum Scrambling as a Cryptographic Resource | [10.5281/zenodo.18889224](https://doi.org/10.5281/zenodo.18889224) |
+| [7] | Lieb-Robinson Bounds and Krylov Unforgeability: A Rigorous Framework | [10.5281/zenodo.18919227](https://doi.org/10.5281/zenodo.18919227) |
+
+Paper [7] provides the **formal security proof** for the detection framework: the Krylov Locality Theorem proves that the first *d* Lanczos coefficients are exactly protected from an eavesdropper at distance *d*, and the Krylov Unforgeability Theorem proves that any information-extracting perturbation necessarily distorts the coefficients beyond the detection threshold. Covers coherent attacks, time-dependent strategies, and includes full numerical verification for N = 6, 8, 10, 12.
 
 Additional reference:
 
@@ -375,7 +389,7 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
   title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
-  version   = {1.1.0},
+  version   = {1.3.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
   url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}
@@ -392,5 +406,18 @@ For the synthesis paper:
   year    = {2026},
   journal = {Zenodo},
   doi     = {10.5281/zenodo.18889224}
+}
+```
+
+For the formal security proof:
+
+```bibtex
+@article{suess2026liebrob,
+  author  = {Süß, Daniel},
+  title   = {Lieb-Robinson Bounds and Krylov Unforgeability:
+             A Rigorous Framework},
+  year    = {2026},
+  journal = {Zenodo},
+  doi     = {10.5281/zenodo.18919227}
 }
 ```

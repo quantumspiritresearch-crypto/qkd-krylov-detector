@@ -5,11 +5,11 @@ type: software
 authors:
   - family-names: "Süß"
     given-names: "Daniel"
-    orcid: ""
-version: "1.0.0"
-date-released: "2026-03-06"
+    orcid: "https://orcid.org/0009-0003-2173-3158"
+version: "1.3.0"
+date-released: "2026-03-09"
 license: MIT
-repository-code: "https://github.com/danielsuess/qkd-krylov-detector"
+repository-code: "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector"
 url: "https://doi.org/10.5281/zenodo.18889224"
 abstract: >-
   A three-layer eavesdropper detection framework for Quantum Key
@@ -70,3 +70,10 @@ references:
         given-names: "Daniel"
     year: 2026
     doi: "10.5281/zenodo.18889224"
+  - type: article
+    title: "Lieb-Robinson Bounds and Krylov Unforgeability: A Rigorous Framework"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18919227"
