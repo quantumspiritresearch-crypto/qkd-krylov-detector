@@ -1,5 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18889224.svg)](https://doi.org/10.5281/zenodo.18889224)
 [![Journal Paper](https://zenodo.org/badge/DOI/10.5281/zenodo.18938723.svg)](https://doi.org/10.5281/zenodo.18938723)
+[![Loschmidt Echo](https://zenodo.org/badge/DOI/10.5281/zenodo.18939996.svg)](https://doi.org/10.5281/zenodo.18939996)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-47%2F47%20passed-brightgreen.svg)](#tests)
@@ -8,7 +9,7 @@
 
 A comprehensive eavesdropper detection framework for Quantum Key Distribution (QKD) based on **Krylov complexity** and **sidereal filtering**.
 
-This package implements the methods from a series of eight research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis.
+This package implements the methods from a series of ten research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis.
 
 ---
 
@@ -319,6 +320,16 @@ Real-data validation results (from Paper [8]):
 
 Paper [8] completes the **validation triangle**: theoretical unforgeability (Paper [7]), simulation-based sensitivity (Papers [5]–[6]), and real-data validation on experimental QKD channel data.
 
+Loschmidt echo connection (from Paper [10]):
+
+| Correlation (N = 20) | Pearson r | p-value |
+|----------------------|-----------|---------|
+| γ² vs. Lanczos RMSE | 0.958 | 3.0 × 10⁻¹¹ |
+| Echo decay vs. Lanczos RMSE | 0.838 | 3.9 × 10⁻⁶ |
+| Krylov score vs. Echo decay | 0.850 | 2.1 × 10⁻⁶ |
+
+Paper [10] shows that the Krylov detector is an **operator-space Loschmidt echo**, connecting QKD security to the broader framework of quantum chaos diagnostics.
+
 Formal security results (from Paper [7]):
 
 | Result | Statement |
@@ -345,10 +356,13 @@ Formal security results (from Paper [7]):
 | [7] | Lieb-Robinson Bounds and Krylov Unforgeability: A Rigorous Framework | [10.5281/zenodo.18919227](https://doi.org/10.5281/zenodo.18919227) |
 | [8] | Real-Data Validation on Experimental QKD Channel Data | [10.5281/zenodo.18936062](https://doi.org/10.5281/zenodo.18936062) |
 | **[9]** | **Journal Paper: Krylov Complexity as a Physical-Layer Eavesdropper Detector in QKD** | [**10.5281/zenodo.18938723**](https://doi.org/10.5281/zenodo.18938723) |
+| **[10]** | **The Krylov Eavesdropper Detector as an Operator-Space Loschmidt Echo** | [**10.5281/zenodo.18939996**](https://doi.org/10.5281/zenodo.18939996) |
 
 Paper [7] provides the **formal security proof** for the detection framework: the Krylov Locality Theorem proves that the first *d* Lanczos coefficients are exactly protected from an eavesdropper at distance *d*, and the Krylov Unforgeability Theorem proves that any information-extracting perturbation necessarily distorts the coefficients beyond the detection threshold. Covers coherent attacks, time-dependent strategies, and includes full numerical verification for N = 6, 8, 10, 12.
 
-Paper [9] is the **self-contained journal submission** that synthesizes all eight prior publications into a single paper. It presents the complete framework — theory, simulation, and experimental validation — including the precise formulation of the Krylov Unforgeability Theorem: for any local Hamiltonian perturbation with generic coupling operator, no attack strategy can simultaneously extract information and preserve the clean Krylov signature within the detection threshold.
+Paper [9] is the **self-contained journal submission** that synthesizes all prior publications into a single paper. It presents the complete framework — theory, simulation, and experimental validation — including the precise formulation of the Krylov Unforgeability Theorem: for any local Hamiltonian perturbation with generic coupling operator, no attack strategy can simultaneously extract information and preserve the clean Krylov signature within the detection threshold.
+
+Paper [10] establishes the formal connection between the Krylov detector and the **Loschmidt echo** — a well-studied diagnostic of quantum chaos. It introduces the operator-space Loschmidt echo M_op(t) and proves that the Krylov detection score is equivalent to the time-averaged operator echo. Numerical simulations with N = 20 coupling strengths confirm: γ² vs. Lanczos distortion (r = 0.958, p < 10⁻¹⁰), echo decay vs. Lanczos distortion (r = 0.838, p < 10⁻⁵), and Krylov score vs. echo decay (r = 0.850, p < 10⁻⁵). Includes reproducible Python code and all numerical data.
 
 Additional reference:
 
@@ -406,7 +420,7 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
   title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
-  version   = {1.4.0},
+  version   = {1.6.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
   url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}
@@ -436,6 +450,19 @@ For the formal security proof:
   year    = {2026},
   journal = {Zenodo},
   doi     = {10.5281/zenodo.18919227}
+}
+```
+
+For the Loschmidt echo paper:
+
+```bibtex
+@article{suess2026loschmidt,
+  author  = {Süß, Daniel},
+  title   = {The Krylov Eavesdropper Detector as an Operator-Space
+             Loschmidt Echo},
+  year    = {2026},
+  journal = {Zenodo (preprint)},
+  doi     = {10.5281/zenodo.18939996}
 }
 ```
 
