@@ -124,7 +124,8 @@ qkd_krylov_detector/
 ├── calibration.py           # Calibrated slope detector + Option B
 ├── qber_simulator.py        # QBER generation (idealized + realistic noise)
 ├── spectral_analysis.py     # ⟨r⟩ ratio and regime classification
-└── pulsar_analysis.py       # Partial F-test for pulsar timing
+├── pulsar_analysis.py       # Partial F-test for pulsar timing
+└── loschmidt_echo.py        # Operator-space Loschmidt echo (Paper [10])
 ```
 
 ---
@@ -255,6 +256,23 @@ Validated on NANOGrav 15-year dataset (PSR J1713+0747, 59,389 TOAs). See Paper [
 
 ---
 
+### `loschmidt_echo` — Operator-Space Loschmidt Echo
+
+Establishes the formal connection between the Krylov detector and the Loschmidt echo. The operator-space echo M_op(t) measures how well the operator dynamics can be reversed under perturbation — and the Krylov detection score is its time average.
+
+| Function | Purpose |
+|----------|---------|
+| `eigendecompose()` | Eigendecomposition for fast time evolution |
+| `compute_state_echo()` | State-space Loschmidt echo M(t) |
+| `compute_operator_echo()` | Operator-space Loschmidt echo M_op(t) |
+| `compute_echo_decay_rate()` | Exponential decay rate of M_op(t) |
+| `compute_operator_autocorrelation()` | Operator autocorrelation C(t) |
+| `loschmidt_krylov_correlation()` | Full correlation analysis (gamma scan) |
+
+Key result: The operator echo decays faster than the state echo, explaining why the Krylov detector is more sensitive than state-based fidelity measures. See Paper [10].
+
+---
+
 ## Examples
 
 The `examples/` directory contains three scripts:
@@ -262,6 +280,7 @@ The `examples/` directory contains three scripts:
 - `quickstart.py` — Minimal 20-line detection demo
 - `full_pipeline.py` — Complete three-layer pipeline with ROC analysis and publication-quality plots
 - `nanograv_validation.py` — Sidereal filter validation on synthetic pulsar timing data
+- `loschmidt_echo.py` — Loschmidt echo analysis reproducing Paper [10] results
 
 ---
 
@@ -271,7 +290,7 @@ The `examples/` directory contains three scripts:
 pytest tests/ -v
 ```
 
-The test suite (**47 tests**) validates:
+The test suite (**62 tests**) validates:
 
 - **Hamiltonian**: dimensions, Hermiticity, Eve perturbation (dense + sparse, cross-validated)
 - **Lanczos**: positivity, linear growth, Eve deviation
@@ -283,6 +302,7 @@ The test suite (**47 tests**) validates:
 - **Sparse Hamiltonian**: shape, Hermiticity, dense/sparse agreement, ⟨r⟩ crossover
 - **Pulsar analysis**: design matrix, F-test (signal/noise), gap classification
 - **Spectral analysis**: ⟨r⟩ ≈ 0.366, crossover classification
+- **Loschmidt echo**: eigendecomposition, state/operator echoes, decay rate, autocorrelation, Lanczos
 
 ---
 
@@ -422,7 +442,7 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
   title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
-  version   = {1.7.0},
+  version   = {1.8.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
   url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}
