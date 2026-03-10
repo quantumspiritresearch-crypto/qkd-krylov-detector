@@ -306,6 +306,18 @@ Scaling law (from Paper [4]):
 
 Critical crossover at ⟨r⟩ = 0.366 (GOE statistics threshold).
 
+Real-data validation results (from Paper [8]):
+
+| Metric | Value |
+|--------|-------|
+| Dataset | 181,606 experimental QBER measurements (fiber-optic QKD) |
+| False-positive rate | 4.5% (at 3σ threshold) |
+| Sensitivity (+0.5% QBER) | 96.0% |
+| AUC (+0.5% QBER) | 0.981 |
+| AUC (+1.0% QBER) | 0.999 |
+
+Paper [8] completes the **validation triangle**: theoretical unforgeability (Paper [7]), simulation-based sensitivity (Papers [5]–[6]), and real-data validation on experimental QKD channel data.
+
 Formal security results (from Paper [7]):
 
 | Result | Statement |
@@ -330,6 +342,7 @@ Formal security results (from Paper [7]):
 | [5] | QKD Eve Detector: A Unified Framework — Parts I–III | [10.5281/zenodo.18873824](https://doi.org/10.5281/zenodo.18873824) |
 | [6] | Quantum Scrambling as a Cryptographic Resource | [10.5281/zenodo.18889224](https://doi.org/10.5281/zenodo.18889224) |
 | [7] | Lieb-Robinson Bounds and Krylov Unforgeability: A Rigorous Framework | [10.5281/zenodo.18919227](https://doi.org/10.5281/zenodo.18919227) |
+| [8] | Real-Data Validation on Experimental QKD Channel Data | [10.5281/zenodo.18936062](https://doi.org/10.5281/zenodo.18936062) |
 
 Paper [7] provides the **formal security proof** for the detection framework: the Krylov Locality Theorem proves that the first *d* Lanczos coefficients are exactly protected from an eavesdropper at distance *d*, and the Krylov Unforgeability Theorem proves that any information-extracting perturbation necessarily distorts the coefficients beyond the detection threshold. Covers coherent attacks, time-dependent strategies, and includes full numerical verification for N = 6, 8, 10, 12.
 
@@ -389,7 +402,7 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
   title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
-  version   = {1.3.0},
+  version   = {1.4.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
   url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}
