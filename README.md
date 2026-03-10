@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18889224.svg)](https://doi.org/10.5281/zenodo.18889224)
+[![Journal Paper](https://zenodo.org/badge/DOI/10.5281/zenodo.18938723.svg)](https://doi.org/10.5281/zenodo.18938723)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-47%2F47%20passed-brightgreen.svg)](#tests)
@@ -323,11 +324,11 @@ Formal security results (from Paper [7]):
 | Result | Statement |
 |--------|-----------|
 | Krylov Locality (Theorem 1) | First *d* Lanczos coefficients exactly protected — algebraic identity |
-| Perturbation Detectability (Theorem 3) | First affected coefficient scales as γ² with computable bounds |
-| Information-Distortion Bound (Prop. 3) | Holevo quantity χ ~ γ², distortion Δ_K ~ γ⁴, tradeoff χ ≤ const·√Δ_K |
-| Krylov Unforgeability (Theorem 5) | No physically realizable attack can extract information without detection |
-| Coherent Attack Invariance (Theorem 6) | Lanczos coefficients are state-independent — coherent attacks cannot help |
-| Time-Dependent Unforgeability (Theorem 7) | Time-varying coupling produces strictly more distortion (Jensen inequality) |
+| Perturbation Detectability (Theorem 2) | First affected coefficient scales as γ² with computable bounds |
+| Information-Distortion Bound (Prop. 1) | Holevo quantity χ ~ γ², distortion Δ_K ~ γ⁴, tradeoff χ ≤ const·√Δ_K |
+| Krylov Unforgeability (Theorem 4) | For any local Hamiltonian perturbation with generic coupling, no attack can extract information without detection |
+| Coherent Attack Invariance (Theorem 5) | Lanczos coefficients are state-independent — coherent attacks cannot help |
+| Time-Dependent Unforgeability (Theorem 6) | Time-varying coupling produces strictly more distortion (Jensen inequality) |
 
 ---
 
@@ -343,8 +344,11 @@ Formal security results (from Paper [7]):
 | [6] | Quantum Scrambling as a Cryptographic Resource | [10.5281/zenodo.18889224](https://doi.org/10.5281/zenodo.18889224) |
 | [7] | Lieb-Robinson Bounds and Krylov Unforgeability: A Rigorous Framework | [10.5281/zenodo.18919227](https://doi.org/10.5281/zenodo.18919227) |
 | [8] | Real-Data Validation on Experimental QKD Channel Data | [10.5281/zenodo.18936062](https://doi.org/10.5281/zenodo.18936062) |
+| **[9]** | **Journal Paper: Krylov Complexity as a Physical-Layer Eavesdropper Detector in QKD** | [**10.5281/zenodo.18938723**](https://doi.org/10.5281/zenodo.18938723) |
 
 Paper [7] provides the **formal security proof** for the detection framework: the Krylov Locality Theorem proves that the first *d* Lanczos coefficients are exactly protected from an eavesdropper at distance *d*, and the Krylov Unforgeability Theorem proves that any information-extracting perturbation necessarily distorts the coefficients beyond the detection threshold. Covers coherent attacks, time-dependent strategies, and includes full numerical verification for N = 6, 8, 10, 12.
+
+Paper [9] is the **self-contained journal submission** that synthesizes all eight prior publications into a single paper. It presents the complete framework — theory, simulation, and experimental validation — including the precise formulation of the Krylov Unforgeability Theorem: for any local Hamiltonian perturbation with generic coupling operator, no attack strategy can simultaneously extract information and preserve the clean Krylov signature within the detection threshold.
 
 Additional reference:
 
@@ -432,5 +436,19 @@ For the formal security proof:
   year    = {2026},
   journal = {Zenodo},
   doi     = {10.5281/zenodo.18919227}
+}
+```
+
+For the journal paper (recommended):
+
+```bibtex
+@article{suess2026journal,
+  author  = {Süß, Daniel},
+  title   = {Krylov Complexity as a Physical-Layer Eavesdropper Detector
+             in Quantum Key Distribution: Theory, Simulation, and
+             Experimental Validation},
+  year    = {2026},
+  journal = {Zenodo (preprint)},
+  doi     = {10.5281/zenodo.18938723}
 }
 ```
