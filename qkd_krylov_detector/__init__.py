@@ -193,3 +193,13 @@ __all__ = [
     "classify_window",
     "make_scenario",
 ]
+
+# Loschmidt echo module (Paper [10])
+from .loschmidt_echo import (
+    eigendecompose,
+    compute_state_echo,
+    compute_operator_echo,
+    compute_echo_decay_rate,
+    compute_operator_autocorrelation,
+    loschmidt_krylov_correlation,
+)
