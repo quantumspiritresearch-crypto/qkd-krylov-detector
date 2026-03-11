@@ -3,13 +3,13 @@
 [![Loschmidt Echo](https://zenodo.org/badge/DOI/10.5281/zenodo.18939996.svg)](https://doi.org/10.5281/zenodo.18939996)
 [![Theoretical Foundations](https://zenodo.org/badge/DOI/10.5281/zenodo.18957362.svg)](https://doi.org/10.5281/zenodo.18957362)
 [![Open Systems](https://zenodo.org/badge/DOI/10.5281/zenodo.18959827.svg)](https://doi.org/10.5281/zenodo.18959827)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-47%2F47%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-62%2F62%20passed-brightgreen.svg)](#tests)
 
 # QKD Krylov Detector
 
-A comprehensive eavesdropper detection framework for Quantum Key Distribution (QKD) based on **Krylov complexity**, **sidereal filtering**, and the **operator-space Loschmidt echo**.
+A comprehensive eavesdropper detection and quantum channel benchmarking framework for Quantum Key Distribution (QKD) based on **Krylov complexity**, **sidereal filtering**, the **operator-space Loschmidt echo**, and the **Physical Bridge theorem**.
 
 The central insight is that the channel Hamiltonian's Lanczos coefficients encode a Gaussian autocorrelation fingerprint in the QBER time series — and this fingerprint is formally equivalent to an **operator-space Loschmidt echo**. Any eavesdropper perturbation distorts this echo in a way that is both detectable and, by Lieb-Robinson bounds, provably unforgeable. The Krylov Unforgeability Theorem establishes that no local Hamiltonian attack can simultaneously extract information and preserve the clean signature.
 
@@ -36,6 +36,17 @@ The left panel shows the **Krylov detection score** over time. The green line (c
 | **1** | `sidereal_filter` | Remove 23.93h sidereal and 24.0h diurnal periodicities | [1], [2], [3] |
 | **2** | `lanczos_extractor` | Compute Krylov b_n coefficients via Lanczos algorithm | [4], [6] |
 | **3** | `template_detector` | Match QBER autocorrelation against Gaussian template | [5], [6] |
+
+### New in v2.0.0 — Theoretical Foundations and Benchmarking
+
+| Module | Function | Paper |
+|--------|----------|-------|
+| `krylov_framework` | **Central orchestrator** — unified API for detection, diagnostics, benchmarking | [11], [12] |
+| `physical_bridge` | **Physical Bridge** — formal C_op ↔ C_QBER mapping (Theorem 1) | [11] |
+| `open_system_bridge` | **Lindblad extension** — adjoint Lindbladian, open-system autocorrelation | [12] |
+| `error_diagnostics` | **Error discrimination** — coherent vs. decoherent error classification | [12] |
+| `one_way_function` | **One-way property** — Hankel matrix condition number, inversion hardness | [11] |
+| `universality` | **Universality tests** — Heisenberg, XXZ, SYK families (pure numpy) | [11] |
 
 ### Extended Modules
 
@@ -115,7 +126,13 @@ print(f"AUC = {auc:.4f}")
 
 ```
 qkd_krylov_detector/
-├── __init__.py              # Public API exports (all 11 modules)
+├── __init__.py              # Public API exports (v2.0.0, 18 modules)
+├── krylov_framework.py      # NEW: Central orchestrator (KrylovFramework)
+├── physical_bridge.py       # NEW: Physical Bridge theorem (Paper [11])
+├── open_system_bridge.py    # NEW: Lindblad extension (Paper [12])
+├── error_diagnostics.py     # NEW: Coherent vs. decoherent discrimination
+├── one_way_function.py      # NEW: Hankel matrix one-way property
+├── universality.py          # NEW: Multi-Hamiltonian universality tests
 ├── hamiltonian.py           # Dense 8-qubit Heisenberg chain (QuTiP)
 ├── sparse_hamiltonian.py    # Sparse Hamiltonian for N > 8 (scipy)
 ├── lanczos_extractor.py     # Layer 2: Lanczos algorithm for b_n
@@ -450,7 +467,9 @@ Each function in this package traces back to a specific notebook cell:
 
 ## License
 
-MIT License. Copyright (c) 2026 Daniel Süß.
+**AGPL-3.0-or-later** (versions ≥ 2.0.0). Copyright (c) 2026 Daniel Süß.
+
+Versions ≤ 1.9.1 were released under the MIT License. Starting with v2.0.0, the package is licensed under the GNU Affero General Public License v3.0 or later. This change reflects the addition of the Physical Bridge, Open-System Bridge, and Error Diagnostics modules, which are AGPL-licensed. All existing modules are now also AGPL due to their integration with the new core.
 
 ---
 
@@ -464,7 +483,7 @@ If you use this package, please cite it using the provided [`CITATION.cff`](CITA
   title     = {QKD Krylov Detector: Comprehensive Eavesdropper Detection
                for Quantum Key Distribution},
   year      = {2026},
-  version   = {1.9.0},
+  version   = {2.0.0},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.18889224},
   url       = {https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector}

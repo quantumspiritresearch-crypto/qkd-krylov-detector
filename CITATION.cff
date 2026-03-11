@@ -1,24 +1,25 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "QKD Krylov Detector: Three-Layer Eavesdropper Detection for Quantum Key Distribution"
+title: "QKD Krylov Detector: Eavesdropper Detection and Quantum Channel Benchmarking via Krylov Complexity"
 type: software
 authors:
   - family-names: "Süß"
     given-names: "Daniel"
     orcid: "https://orcid.org/0009-0003-2173-3158"
-version: "1.9.0"
+version: "2.0.0"
 date-released: "2026-03-11"
-license: MIT
+license: AGPL-3.0-or-later
 repository-code: "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector"
 url: "https://doi.org/10.5281/zenodo.18889224"
 abstract: >-
-  A three-layer eavesdropper detection framework for Quantum Key
-  Distribution (QKD) based on Krylov complexity and sidereal filtering.
-  Layer 1 removes sidereal and diurnal periodicities from the QBER time
-  series. Layer 2 extracts Lanczos coefficients to build a Gaussian
-  autocorrelation template. Layer 3 performs sliding-window template
-  matching to detect deviations caused by eavesdropping. Achieves
-  AUC up to 0.9989 under realistic hardware noise.
+  A comprehensive eavesdropper detection and quantum channel benchmarking
+  framework for Quantum Key Distribution (QKD) based on Krylov complexity.
+  v2.0.0 introduces the Physical Bridge theorem (C_op <-> C_QBER mapping),
+  Lindblad open-system extension, coherent vs. decoherent error diagnostics,
+  Hankel matrix one-way function property, and multi-Hamiltonian universality
+  tests. The three-layer detection pipeline (sidereal filter, Lanczos
+  extraction, template matching) achieves AUC up to 0.9989 under realistic
+  hardware noise.
 keywords:
   - quantum key distribution
   - QKD
@@ -27,6 +28,12 @@ keywords:
   - eavesdropper detection
   - quantum scrambling
   - sidereal filtering
+  - physical bridge
+  - Lindblad dynamics
+  - open quantum systems
+  - error diagnostics
+  - one-way function
+  - quantum channel benchmarking
 references:
   - type: article
     title: "Deconvolution of Sidereal and Diurnal Periodicities in QKD"

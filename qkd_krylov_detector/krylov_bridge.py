@@ -2,6 +2,11 @@
 Krylov-Statistical Bridge
 ==========================
 
+.. deprecated:: 2.0.0
+    This module is superseded by ``physical_bridge.py`` which provides
+    the formal Physical Bridge theorem. This module is maintained for
+    backward compatibility.
+
 Connects the theoretical Hamiltonian perturbation (b_n deviation) to
 the observable QBER statistical anomaly (kurtosis, skewness).
 

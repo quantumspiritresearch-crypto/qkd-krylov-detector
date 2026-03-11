@@ -81,6 +81,11 @@ class KrylovEngine:
     """
     Krylov complexity analysis engine.
 
+    .. deprecated:: 2.0.0
+        Use :class:`KrylovFramework` from ``krylov_framework.py`` instead.
+        KrylovEngine is maintained for backward compatibility but routes
+        through the new framework internally.
+
     Wraps the Lanczos coefficient computation and template-based detection
     into a single object with configurable parameters.
 

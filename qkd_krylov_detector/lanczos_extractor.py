@@ -17,7 +17,11 @@ Reference:
     Paper [6]: Quantum Scrambling as Cryptographic Resource (DOI: 10.5281/zenodo.18889224)
     Parker et al., "A Universal Operator Growth Hypothesis," PRX 9, 041017 (2019)
 
-Author: Daniel Süß
+Author: Daniel Suess
+
+Note: As of v2.0.0, this module integrates with the Physical Bridge
+(physical_bridge.py) for validation of Lanczos coefficients against
+operator autocorrelation data.
 """
 
 import numpy as np
@@ -159,6 +163,43 @@ def compute_bn_deviation(b_baseline, b_perturbed):
     return float(np.mean(np.abs(
         np.asarray(b_perturbed[:ml]) - np.asarray(b_baseline[:ml])
     )))
+
+
+def compute_lanczos_from_matrix(H_matrix, O_matrix=None, n_steps=25):
+    """
+    Compute Lanczos coefficients from numpy matrices (no QuTiP).
+
+    This is a convenience wrapper around physical_bridge.compute_lanczos_coefficients
+    for use in contexts where QuTiP is not available.
+
+    Parameters
+    ----------
+    H_matrix : ndarray, shape (d, d)
+        Hamiltonian as numpy array.
+    O_matrix : ndarray, shape (d, d), optional
+        Initial operator. If None, uses sigma_z on qubit 0.
+    n_steps : int
+        Number of Lanczos steps.
+
+    Returns
+    -------
+    ndarray
+        Lanczos coefficients b_n.
+    """
+    from .physical_bridge import compute_lanczos_coefficients
+    H = np.asarray(H_matrix, dtype=complex)
+    d = H.shape[0]
+    if O_matrix is None:
+        N_q = int(np.round(np.log2(d)))
+        # Build sigma_z on qubit 0
+        sz = np.array([[1, 0], [0, -1]], dtype=complex)
+        I2 = np.eye(2, dtype=complex)
+        O = sz
+        for _ in range(N_q - 1):
+            O = np.kron(O, I2)
+    else:
+        O = np.asarray(O_matrix, dtype=complex)
+    return compute_lanczos_coefficients(H, O, n_steps)
 
 
 def get_slope(b_n):

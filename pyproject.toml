@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qkd-krylov-detector"
-version = "1.9.0"
-description = "Comprehensive eavesdropper detection framework for QKD — BB84 simulation, multi-attack classification, Krylov complexity, and sidereal filtering"
+version = "2.0.0"
+description = "Comprehensive eavesdropper detection and quantum channel benchmarking framework for QKD — Physical Bridge, Lindblad extension, error diagnostics, Krylov complexity, and sidereal filtering"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0-or-later"}
 authors = [
     {name = "Daniel Süß"}
 ]
@@ -20,11 +20,16 @@ keywords = [
     "eavesdropper-detection",
     "quantum-scrambling",
     "sidereal-filter",
+    "physical-bridge",
+    "lindblad",
+    "open-quantum-systems",
+    "error-diagnostics",
+    "one-way-function",
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
