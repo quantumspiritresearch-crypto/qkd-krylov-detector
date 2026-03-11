@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qkd-krylov-detector"
-version = "1.4.0"
+version = "1.9.0"
 description = "Comprehensive eavesdropper detection framework for QKD — BB84 simulation, multi-attack classification, Krylov complexity, and sidereal filtering"
 readme = "README.md"
 license = {text = "MIT"}

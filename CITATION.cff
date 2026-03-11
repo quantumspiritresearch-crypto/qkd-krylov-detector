@@ -6,8 +6,8 @@ authors:
   - family-names: "Süß"
     given-names: "Daniel"
     orcid: "https://orcid.org/0009-0003-2173-3158"
-version: "1.4.0"
-date-released: "2026-03-10"
+version: "1.9.0"
+date-released: "2026-03-11"
 license: MIT
 repository-code: "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector"
 url: "https://doi.org/10.5281/zenodo.18889224"
@@ -84,3 +84,24 @@ references:
         given-names: "Daniel"
     year: 2026
     doi: "10.5281/zenodo.18936062"
+  - type: article
+    title: "Krylov Complexity as a Physical-Layer Eavesdropper Detector in QKD"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18940281"
+  - type: article
+    title: "The Krylov Eavesdropper Detector as an Operator-Space Loschmidt Echo"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18939996"
+  - type: article
+    title: "Theoretical Foundations of Krylov-Based Quantum Channel Authentication: Physical Bridge, One-Way Function Property, and Universality"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18957362"

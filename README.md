@@ -1,6 +1,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18889224.svg)](https://doi.org/10.5281/zenodo.18889224)
 [![Journal Paper](https://zenodo.org/badge/DOI/10.5281/zenodo.18940281.svg)](https://doi.org/10.5281/zenodo.18940281)
 [![Loschmidt Echo](https://zenodo.org/badge/DOI/10.5281/zenodo.18939996.svg)](https://doi.org/10.5281/zenodo.18939996)
+[![Theoretical Foundations](https://zenodo.org/badge/DOI/10.5281/zenodo.18957362.svg)](https://doi.org/10.5281/zenodo.18957362)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-47%2F47%20passed-brightgreen.svg)](#tests)
@@ -11,7 +12,7 @@ A comprehensive eavesdropper detection framework for Quantum Key Distribution (Q
 
 The central insight is that the channel Hamiltonian's Lanczos coefficients encode a Gaussian autocorrelation fingerprint in the QBER time series — and this fingerprint is formally equivalent to an **operator-space Loschmidt echo**. Any eavesdropper perturbation distorts this echo in a way that is both detectable and, by Lieb-Robinson bounds, provably unforgeable. The Krylov Unforgeability Theorem establishes that no local Hamiltonian attack can simultaneously extract information and preserve the clean signature.
 
-This package implements the methods from a series of ten research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis. Validated on 181,606 experimental QBER measurements from a deployed fiber-optic QKD system (AUC = 0.981, ~20x more sensitive than the standard QBER threshold).
+This package implements the methods from a series of eleven research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis. Validated on 181,606 experimental QBER measurements from a deployed fiber-optic QKD system (AUC = 0.981, ~20x more sensitive than the standard QBER threshold).
 
 ---
 
@@ -379,12 +380,23 @@ Formal security results (from Paper [7]):
 | [8] | Real-Data Validation on Experimental QKD Channel Data | [10.5281/zenodo.18936062](https://doi.org/10.5281/zenodo.18936062) |
 | **[9]** | **Journal Paper: Krylov Complexity as a Physical-Layer Eavesdropper Detector in QKD (v3)** | [**10.5281/zenodo.18940281**](https://doi.org/10.5281/zenodo.18940281) |
 | **[10]** | **The Krylov Eavesdropper Detector as an Operator-Space Loschmidt Echo** | [**10.5281/zenodo.18939996**](https://doi.org/10.5281/zenodo.18939996) |
+| **[11]** | **Theoretical Foundations: Physical Bridge, One-Way Function, and Universality** | [**10.5281/zenodo.18957362**](https://doi.org/10.5281/zenodo.18957362) |
 
 Paper [7] provides the **formal security proof** for the detection framework: the Krylov Locality Theorem proves that the first *d* Lanczos coefficients are exactly protected from an eavesdropper at distance *d*, and the Krylov Unforgeability Theorem proves that any information-extracting perturbation necessarily distorts the coefficients beyond the detection threshold. Covers coherent attacks, time-dependent strategies, and includes full numerical verification for N = 6, 8, 10, 12.
 
 Paper [9] is the **self-contained journal submission** that synthesizes all prior publications into a single paper. It presents the complete framework — theory, simulation, and experimental validation — including the precise formulation of the Krylov Unforgeability Theorem: for any local Hamiltonian perturbation with generic coupling operator, no attack strategy can simultaneously extract information and preserve the clean Krylov signature within the detection threshold.
 
 Paper [10] establishes the formal connection between the Krylov detector and the **Loschmidt echo** — a well-studied diagnostic of quantum chaos. It introduces the operator-space Loschmidt echo M_op(t) and proves that the Krylov detection score is equivalent to the time-averaged operator echo. Numerical simulations with N = 20 coupling strengths confirm: γ² vs. Lanczos distortion (r = 0.958, p < 10⁻¹⁰), echo decay vs. Lanczos distortion (r = 0.838, p < 10⁻⁵), and Krylov score vs. echo decay (r = 0.850, p < 10⁻⁵). Includes reproducible Python code and all numerical data.
+
+Paper [11] is the **capstone paper** that closes three theoretical gaps remaining from Papers 1–10:
+
+| Result | Status | Key Finding |
+|--------|--------|-------------|
+| **Physical Bridge** (Theorem 1) | Formally derived | C_QBER(τ) ∝ C_op(τ), Pearson r = 0.9997 |
+| **One-Way Function** (Theorem 2) | Proven (unconditional) | Hankel matrix κ_n ~ 32ⁿ, post-quantum secure |
+| **Universality** (Theorem 3) | Verified | 8/8 Hamiltonian families, 10/10 perturbation types |
+
+All three results are **detector-agnostic**: they characterize the Krylov framework itself, independent of the specific detection algorithm. The one-way function property provides **information-theoretic** (not merely computational) hardness, meaning the framework is secure even against quantum computers.
 
 Additional reference:
 
@@ -489,7 +501,6 @@ For the Loschmidt echo paper:
 ```
 
 For the journal paper (recommended):
-
 ```bibtex
 @article{suess2026journal,
   author  = {Süß, Daniel},
@@ -499,5 +510,17 @@ For the journal paper (recommended):
   year    = {2026},
   journal = {Zenodo (preprint)},
   doi     = {10.5281/zenodo.18938723}
+}
+```
+For the theoretical foundations (capstone):
+```bibtex
+@article{suess2026foundations,
+  author  = {Süß, Daniel},
+  title   = {Theoretical Foundations of Krylov-Based Quantum Channel
+             Authentication: Physical Bridge, One-Way Function Property,
+             and Universality},
+  year    = {2026},
+  journal = {Zenodo (preprint)},
+  doi     = {10.5281/zenodo.18957362}
 }
 ```
