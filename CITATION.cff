@@ -105,3 +105,10 @@ references:
         given-names: "Daniel"
     year: 2026
     doi: "10.5281/zenodo.18957362"
+  - type: article
+    title: "Physical Bridge for Open Quantum Systems: Krylov-Based Error Diagnostics for Quantum Computers"
+    authors:
+      - family-names: "Süß"
+        given-names: "Daniel"
+    year: 2026
+    doi: "10.5281/zenodo.18959827"
