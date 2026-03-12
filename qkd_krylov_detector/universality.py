@@ -6,8 +6,14 @@ Tests the Physical Bridge across multiple Hamiltonian families to
 establish universality. Paper [11] shows that the bridge holds with
 r > 0.997 for:
 
-    - Heisenberg chains (integrable to chaotic crossover)
+    - Heisenberg XXX chains (integrable to chaotic crossover)
+    - Ising + transverse field (chaotic regime)
     - XXZ models (anisotropic exchange)
+    - XY model (integrable-like)
+    - Random-field Heisenberg (disorder-driven)
+    - Mixed coupling (Paper [4] structure)
+    - Frustrated J1-J2 (geometric frustration)
+    - Strong disorder (MBL-like regime)
     - SYK models (maximally chaotic, all-to-all coupling)
 
 This module provides built-in Hamiltonian generators and a testing
@@ -15,7 +21,13 @@ framework to verify the Physical Bridge for arbitrary Hamiltonians.
 
 This module provides:
     - heisenberg_chain: Build Heisenberg chain Hamiltonian (numpy)
+    - ising_chaotic: Build Ising + transverse field Hamiltonian
     - xxz_chain: Build XXZ chain Hamiltonian
+    - xy_model: Build XY model Hamiltonian
+    - random_field_heisenberg: Build random-field Heisenberg Hamiltonian
+    - mixed_coupling: Build mixed-coupling Hamiltonian (Paper [4])
+    - frustrated_j1j2: Build frustrated J1-J2 Hamiltonian
+    - strong_disorder: Build strong-disorder Hamiltonian
     - syk_model: Build SYK4 random Hamiltonian
     - test_hamiltonian_family: Test bridge for a Hamiltonian family
     - compute_universality_score: Score across multiple families
@@ -116,6 +128,43 @@ def heisenberg_chain(N, J=1.0, h=0.5, hz=0.12, hx=0.08,
     return H
 
 
+def ising_chaotic(N, J=1.0, hx=1.05, hz=0.5):
+    """
+    Build the Ising + transverse + longitudinal field Hamiltonian.
+
+    H = J sum_i Z_i Z_{i+1} + hx sum_i X_i + hz sum_i Z_i
+
+    With hx/J ~ 1.05 and hz > 0, the model is in the chaotic regime
+    (non-integrable). Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    J : float
+        ZZ coupling strength.
+    hx : float
+        Transverse field.
+    hz : float
+        Longitudinal field.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    for i in range(N - 1):
+        H += J * _site_op(_sz, i, N) @ _site_op(_sz, i + 1, N)
+
+    for i in range(N):
+        H += hx * _site_op(_sx, i, N) + hz * _site_op(_sz, i, N)
+
+    return H
+
+
 def xxz_chain(N, Jxy=1.0, Jz=0.5, hz=0.1):
     """
     Build the XXZ chain Hamiltonian.
@@ -149,6 +198,220 @@ def xxz_chain(N, Jxy=1.0, Jz=0.5, hz=0.1):
 
     for i in range(N):
         H += hz * _site_op(_sz, i, N)
+
+    return H
+
+
+def xy_model(N, Jx=1.0, Jy=0.5, hz=0.3, hx=0.1):
+    """
+    Build the XY model Hamiltonian with fields.
+
+    H = sum_i [Jx X_i X_{i+1} + Jy Y_i Y_{i+1}] + sum_i [hz Z_i + hx X_i]
+
+    Integrable-like regime. Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    Jx : float
+        XX coupling strength.
+    Jy : float
+        YY coupling strength.
+    hz : float
+        Longitudinal field.
+    hx : float
+        Transverse field.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    for i in range(N - 1):
+        H += Jx * _site_op(_sx, i, N) @ _site_op(_sx, i + 1, N)
+        H += Jy * _site_op(_sy, i, N) @ _site_op(_sy, i + 1, N)
+
+    for i in range(N):
+        H += hz * _site_op(_sz, i, N) + hx * _site_op(_sx, i, N)
+
+    return H
+
+
+def random_field_heisenberg(N, J=1.0, W=1.5, seed=42):
+    """
+    Build the random-field Heisenberg Hamiltonian.
+
+    H = J sum_i (X_i X_{i+1} + Y_i Y_{i+1} + Z_i Z_{i+1})
+      + sum_i h_i Z_i
+
+    where h_i ~ Uniform[-W, W]. Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    J : float
+        Heisenberg coupling.
+    W : float
+        Disorder strength.
+    seed : int
+        Random seed for reproducibility.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    rng = np.random.RandomState(seed)
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    for i in range(N - 1):
+        for pauli in [_sx, _sy, _sz]:
+            H += J * _site_op(pauli, i, N) @ _site_op(pauli, i + 1, N)
+
+    fields = W * (2 * rng.rand(N) - 1)
+    for i in range(N):
+        H += fields[i] * _site_op(_sz, i, N)
+
+    return H
+
+
+def mixed_coupling(N, J=1.0, g=0.5, kappa=0.45, hz=0.12, hx=0.08):
+    """
+    Build the mixed-coupling Hamiltonian (Paper [4] structure).
+
+    Heisenberg coupling on qubits 0-1, XX chain on qubits 2+,
+    ZZ coupling on qubits 1-2, plus fields. Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    J : float
+        Heisenberg coupling between qubits 0-1.
+    g : float
+        XX chain coupling for qubits 2+.
+    kappa : float
+        ZZ coupling between qubits 1-2.
+    hz : float
+        Longitudinal field.
+    hx : float
+        Transverse field.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    # Heisenberg on qubits 0-1
+    for pauli in [_sx, _sy, _sz]:
+        H += J * _site_op(pauli, 0, N) @ _site_op(pauli, 1, N)
+
+    # XX chain for qubits 2+
+    for i in range(2, N - 1):
+        H += g * _site_op(_sx, i, N) @ _site_op(_sx, i + 1, N)
+
+    # ZZ coupling 1-2
+    if N >= 3:
+        H += kappa * _site_op(_sz, 1, N) @ _site_op(_sz, 2, N)
+
+    # Fields
+    for i in range(N):
+        H += hz * _site_op(_sz, i, N) + hx * _site_op(_sx, i, N)
+
+    return H
+
+
+def frustrated_j1j2(N, J1=1.0, J2=0.5, hz=0.1):
+    """
+    Build the frustrated J1-J2 Hamiltonian.
+
+    H = J1 sum_i S_i . S_{i+1} + J2 sum_i S_i . S_{i+2} + hz sum_i Z_i
+
+    Nearest-neighbor + next-nearest-neighbor Heisenberg coupling.
+    Geometric frustration drives the system toward chaos.
+    Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    J1 : float
+        Nearest-neighbor coupling.
+    J2 : float
+        Next-nearest-neighbor coupling.
+    hz : float
+        Longitudinal field.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    # J1: nearest-neighbor
+    for i in range(N - 1):
+        for pauli in [_sx, _sy, _sz]:
+            H += J1 * _site_op(pauli, i, N) @ _site_op(pauli, i + 1, N)
+
+    # J2: next-nearest-neighbor
+    for i in range(N - 2):
+        for pauli in [_sx, _sy, _sz]:
+            H += J2 * _site_op(pauli, i, N) @ _site_op(pauli, i + 2, N)
+
+    # Field
+    for i in range(N):
+        H += hz * _site_op(_sz, i, N)
+
+    return H
+
+
+def strong_disorder(N, J=0.5, W=4.0, seed=123):
+    """
+    Build the strong-disorder Hamiltonian (MBL-like regime).
+
+    H = J sum_i (X_i X_{i+1} + Y_i Y_{i+1} + Z_i Z_{i+1})
+      + sum_i h_i Z_i
+
+    where h_i ~ Uniform[-W, W] with W >> J. Paper [11], Section 4.2.
+
+    Parameters
+    ----------
+    N : int
+        Number of qubits.
+    J : float
+        Heisenberg coupling (weak).
+    W : float
+        Disorder strength (strong).
+    seed : int
+        Random seed for reproducibility.
+
+    Returns
+    -------
+    H : ndarray, shape (2^N, 2^N)
+        Hamiltonian matrix.
+    """
+    rng = np.random.RandomState(seed)
+    dim = 2 ** N
+    H = np.zeros((dim, dim), dtype=complex)
+
+    for i in range(N - 1):
+        for pauli in [_sx, _sy, _sz]:
+            H += J * _site_op(pauli, i, N) @ _site_op(pauli, i + 1, N)
+
+    fields = W * (2 * rng.rand(N) - 1)
+    for i in range(N):
+        H += fields[i] * _site_op(_sz, i, N)
 
     return H
 
@@ -378,11 +641,71 @@ def supported_families():
             'max_N_recommended': 10,
         },
         {
+            'name': 'ising_chaotic',
+            'builder': ising_chaotic,
+            'description': (
+                'Ising + transverse + longitudinal field in the chaotic '
+                'regime (non-integrable). Paper [11], Section 4.2.'
+            ),
+            'min_N': 3,
+            'max_N_recommended': 10,
+        },
+        {
             'name': 'xxz',
             'builder': xxz_chain,
             'description': (
                 'XXZ chain with tunable anisotropy. Interpolates between '
                 'XX model (Jz=0) and Heisenberg (Jz=Jxy).'
+            ),
+            'min_N': 3,
+            'max_N_recommended': 10,
+        },
+        {
+            'name': 'xy',
+            'builder': xy_model,
+            'description': (
+                'XY model with fields. Integrable-like regime. '
+                'Paper [11], Section 4.2.'
+            ),
+            'min_N': 3,
+            'max_N_recommended': 10,
+        },
+        {
+            'name': 'random_field',
+            'builder': random_field_heisenberg,
+            'description': (
+                'Random-field Heisenberg chain. Disorder-driven regime. '
+                'Paper [11], Section 4.2.'
+            ),
+            'min_N': 3,
+            'max_N_recommended': 10,
+        },
+        {
+            'name': 'mixed_coupling',
+            'builder': mixed_coupling,
+            'description': (
+                'Mixed-coupling Hamiltonian from Paper [4]. Heisenberg '
+                'on qubits 0-1, XX chain on 2+, ZZ on 1-2.'
+            ),
+            'min_N': 4,
+            'max_N_recommended': 10,
+        },
+        {
+            'name': 'frustrated_j1j2',
+            'builder': frustrated_j1j2,
+            'description': (
+                'Frustrated J1-J2 Heisenberg chain with next-nearest-neighbor '
+                'coupling. Geometric frustration drives chaos. Paper [11].'
+            ),
+            'min_N': 4,
+            'max_N_recommended': 10,
+        },
+        {
+            'name': 'strong_disorder',
+            'builder': strong_disorder,
+            'description': (
+                'Strong-disorder Heisenberg chain (MBL-like regime). '
+                'W >> J. Paper [11], Section 4.2.'
             ),
             'min_N': 3,
             'max_N_recommended': 10,
