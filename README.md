@@ -4,8 +4,8 @@
 [![Theoretical Foundations](https://zenodo.org/badge/DOI/10.5281/zenodo.18957362.svg)](https://doi.org/10.5281/zenodo.18957362)
 [![Open Systems](https://zenodo.org/badge/DOI/10.5281/zenodo.18959827.svg)](https://doi.org/10.5281/zenodo.18959827)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-62%2F62%20passed-brightgreen.svg)](#tests)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-129%2F129%20passed-brightgreen.svg)](#tests)
 
 # QKD Krylov Detector
 
