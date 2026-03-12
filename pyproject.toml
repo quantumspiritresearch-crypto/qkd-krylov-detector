@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qkd-krylov-detector"
-version = "2.0.0"
+version = "2.1.0"
 description = "Comprehensive eavesdropper detection and quantum channel benchmarking framework for QKD — Physical Bridge, Lindblad extension, error diagnostics, Krylov complexity, and sidereal filtering"
 readme = "README.md"
 license = {text = "AGPL-3.0-or-later"}
