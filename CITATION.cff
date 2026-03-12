@@ -6,8 +6,8 @@ authors:
   - family-names: "Süß"
     given-names: "Daniel"
     orcid: "https://orcid.org/0009-0003-2173-3158"
-version: "2.0.0"
-date-released: "2026-03-11"
+version: "2.1.0"
+date-released: "2026-03-12"
 license: AGPL-3.0-or-later
 repository-code: "https://github.com/quantumspiritresearch-crypto/qkd-krylov-detector"
 url: "https://doi.org/10.5281/zenodo.18889224"
