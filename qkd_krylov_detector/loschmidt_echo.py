@@ -117,7 +117,10 @@ def compute_echo_decay_rate(E_clean, V_clean, E_pert, V_pert, O0, t_max=50,
                             n_samples=10):
     """Compute the exponential decay rate of the operator echo.
 
-    Fits log(M_op(t)) ~ -rate * t over n_samples time points.
+    Fits log(M_op(t)) ~ -rate * t in the regime where the echo is still
+    decaying (M_op > equilibrium floor).  Includes t = 0 (where M_op = 1
+    by construction) and uses adaptive time refinement when the echo
+    decays faster than the initial sampling grid can resolve.
 
     Parameters
     ----------
@@ -136,15 +139,58 @@ def compute_echo_decay_rate(E_clean, V_clean, E_pert, V_pert, O0, t_max=50,
     -------
     float
         Decay rate (non-negative). Larger values indicate faster echo decay.
+
+    Notes
+    -----
+    For strong perturbations the echo can decay to its equilibrium floor
+    (~ 1/dim) within the first sampling interval.  In that regime a naive
+    linear fit on log(M_op) sees only fluctuations and returns rate ~ 0.
+    The fix is two-fold:
+
+    1. Always include t = 0 where M_op = 1 (exact by unitarity).
+    2. If the echo has already saturated at the first non-zero sample,
+       refine the time grid to shorter intervals so the actual decay
+       transient is captured.
     """
     dim = O0.shape[0]
-    sample_times = np.linspace(t_max / n_samples, t_max, n_samples)
+    eq_floor = 1.0 / dim          # equilibrium value for a chaotic system
+    decay_threshold = 3 * eq_floor # above this we consider the echo "alive"
+
+    # --- initial sampling (always starts at t = 0) ---
+    sample_times = np.linspace(0, t_max, n_samples + 1)
     Mop_values = np.array([
+        1.0 if t == 0 else
         compute_operator_echo(E_clean, V_clean, E_pert, V_pert, O0, t, dim)
         for t in sample_times
     ])
-    log_Mop = np.log(np.clip(Mop_values, 1e-15, None))
-    slope = np.polyfit(sample_times, log_Mop, 1)[0]
+
+    # --- adaptive refinement for fast decays ---
+    # If M_op has already dropped below the threshold at the first non-zero
+    # sample, the decay happened inside [0, dt].  Zoom in.
+    max_refinements = 4
+    for _ in range(max_refinements):
+        if Mop_values[1] > decay_threshold:
+            break                 # decay is resolved on this grid
+        t_max_new = sample_times[1]  # zoom into [0, first_dt]
+        sample_times = np.linspace(0, t_max_new, n_samples + 1)
+        Mop_values = np.array([
+            1.0 if t == 0 else
+            compute_operator_echo(E_clean, V_clean, E_pert, V_pert, O0, t, dim)
+            for t in sample_times
+        ])
+
+    # --- fit only the decaying part (M_op > floor) ---
+    mask = Mop_values > decay_threshold
+    if mask.sum() < 2:
+        # Echo decayed faster than we can resolve — return a large rate
+        # estimated from M_op(dt) ~ exp(-rate * dt)
+        dt = sample_times[1]
+        Mop_dt = max(Mop_values[1], 1e-15)
+        return float(-np.log(Mop_dt) / dt)
+
+    t_fit = sample_times[mask]
+    log_Mop = np.log(np.clip(Mop_values[mask], 1e-15, None))
+    slope = np.polyfit(t_fit, log_Mop, 1)[0]
     return float(max(-slope, 0))
 
 
