@@ -13,7 +13,7 @@ A comprehensive eavesdropper detection and quantum channel benchmarking framewor
 
 The central insight is that the channel Hamiltonian's Lanczos coefficients encode a Gaussian autocorrelation fingerprint in the QBER time series — and this fingerprint is formally equivalent to an **operator-space Loschmidt echo**. Any eavesdropper perturbation distorts this echo in a way that is both detectable and, by Lieb-Robinson bounds, provably unforgeable. The Krylov Unforgeability Theorem establishes that no local Hamiltonian attack can simultaneously extract information and preserve the clean signature.
 
-This package implements the methods from a series of twelve research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis. Validated on 181,606 experimental QBER measurements from a deployed fiber-optic QKD system (AUC = 0.981, ~20x more sensitive than the standard QBER threshold).
+This package implements the methods from a series of twelve research papers by Daniel Süß, providing a complete pipeline from BB84 protocol simulation through multi-attack classification to Krylov-based Eve detection with ROC analysis. Validated on 181,606 experimental QBER measurements from a publicly available fiber-optic QKD dataset ([rmnigm/qber-forecasting](https://github.com/rmnigm/qber-forecasting), after outlier removal) achieving AUC = 0.981, ~20x more sensitive than the standard QBER threshold.
 
 ---
 
@@ -353,13 +353,17 @@ Real-data validation results (from Paper [8]):
 
 | Metric | Value |
 |--------|-------|
-| Dataset | 181,606 experimental QBER measurements (fiber-optic QKD) |
+| Dataset | 181,606 experimental QBER measurements from [rmnigm/qber-forecasting](https://github.com/rmnigm/qber-forecasting) (184,850 raw − 3,244 outliers) |
 | False-positive rate | 4.5% (at 3σ threshold) |
 | Sensitivity (+0.5% QBER) | 96.0% |
 | AUC (+0.5% QBER) | 0.981 |
 | AUC (+1.0% QBER) | 0.999 |
 
 Paper [8] completes the **validation triangle**: theoretical unforgeability (Paper [7]), simulation-based sensitivity (Papers [5]–[6]), and real-data validation on experimental QKD channel data.
+
+### Data Acknowledgment
+
+The real-data validation (Paper [8]) uses the publicly available QBER dataset from [rmnigm/qber-forecasting](https://github.com/rmnigm/qber-forecasting) on GitHub. The dataset contains 184,850 experimental QBER measurements from a deployed fiber-optic QKD system; after removing 3,244 outliers, 181,606 measurements were used for validation.
 
 Loschmidt echo connection (from Paper [10]):
 
