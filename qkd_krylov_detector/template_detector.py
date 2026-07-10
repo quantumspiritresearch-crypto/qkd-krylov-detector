@@ -67,7 +67,9 @@ def krylov_dynamic_detector(qber_residuum, b_n, t_axis,
     from .lanczos_extractor import get_theoretical_autocorrelation
 
     qber_residuum = np.asarray(qber_residuum, dtype=float)
-    theor_corr = get_theoretical_autocorrelation(b_n, t_axis[:window_size])
+    # AC length is window_size//2 + 1 after correlate(..., mode='same')[mid:]
+    ac_len = window_size // 2 + 1
+    theor_corr = get_theoretical_autocorrelation(b_n, t_axis[:ac_len])
 
     scores = []
     centers = []

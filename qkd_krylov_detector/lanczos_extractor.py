@@ -29,6 +29,13 @@ from qutip import sigmaz
 from .hamiltonian import get_op, DEFAULT_N
 
 
+def _hs_norm(O):
+    """Hilbert-Schmidt norm: sqrt(Tr[O†O]/d), consistent with EPJ paper Eq. 8."""
+    M = O.full() if hasattr(O, 'full') else np.asarray(O)
+    d = M.shape[0]
+    return float(np.sqrt(np.trace(M.conj().T @ M).real / d))
+
+
 def compute_lanczos(H, n_steps=25, initial_op=None, initial_qubit=0, N=DEFAULT_N):
     """
     Compute Lanczos coefficients b_n via the recursive Krylov algorithm.
@@ -73,9 +80,9 @@ def compute_lanczos(H, n_steps=25, initial_op=None, initial_qubit=0, N=DEFAULT_N
 
     if initial_op is None:
         O_curr = get_op(sigmaz(), initial_qubit, N)
-        O_curr = O_curr / O_curr.norm()
+        O_curr = O_curr / _hs_norm(O_curr)
     else:
-        O_curr = initial_op / initial_op.norm()
+        O_curr = initial_op / _hs_norm(initial_op)
 
     O_prev = None
 
@@ -87,8 +94,8 @@ def compute_lanczos(H, n_steps=25, initial_op=None, initial_qubit=0, N=DEFAULT_N
         if n > 0:
             O_next -= b[n - 1] * O_prev
 
-        # Compute norm (= b_n)
-        bn = O_next.norm()
+        # Compute norm (= b_n) using Hilbert-Schmidt norm
+        bn = _hs_norm(O_next)
 
         # Check for Krylov space exhaustion
         if bn < 1e-12:

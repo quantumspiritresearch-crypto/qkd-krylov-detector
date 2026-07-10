@@ -37,7 +37,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
-    "numpy>=1.21",
+    "numpy>=2.0",
     "scipy>=1.7",
     "qutip>=4.7",
     "matplotlib>=3.5",

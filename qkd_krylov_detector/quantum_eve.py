@@ -452,7 +452,11 @@ def compute_eve_detection_stats(scores_eve, scores_clean, threshold=None):
     Returns
     -------
     dict
-        Keys: detected_pct, forged_pct, auc, sep.
+        Keys: detected_pct, missed_pct, auc, sep.
+        - detected_pct: Percentage of Eve windows correctly flagged (TPR).
+        - missed_pct: Percentage of Eve windows NOT flagged (FNR = 1 - TPR).
+        - auc: Area under ROC curve.
+        - sep: Cohen's d separation between Eve and clean score distributions.
 
     Notebook: quantum_eve_v2.py (compute_eve_detection_stats)
     Paper: [6], Section IV
@@ -464,7 +468,7 @@ def compute_eve_detection_stats(scores_eve, scores_clean, threshold=None):
         threshold = np.percentile(scores_clean, 95)
 
     detected_pct = float(np.mean(scores_eve > threshold) * 100)
-    forged_pct = 100.0 - detected_pct
+    missed_pct = 100.0 - detected_pct  # FNR: Eve present but not detected
 
     # ROC AUC
     labels = np.concatenate([np.ones(len(scores_eve)), np.zeros(len(scores_clean))])
@@ -485,7 +489,8 @@ def compute_eve_detection_stats(scores_eve, scores_clean, threshold=None):
 
     return {
         "detected_pct": detected_pct,
-        "forged_pct": forged_pct,
+        "missed_pct": missed_pct,
+        "forged_pct": missed_pct,  # deprecated alias, kept for backward compat
         "auc": auc,
         "sep": sep,
     }

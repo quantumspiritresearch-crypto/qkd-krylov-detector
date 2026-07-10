@@ -93,7 +93,7 @@ def build_adjoint_lindbladian(H, jump_ops, gamma_list):
         LdL = Lk_dag @ Lk
 
         L_adj += gk * (
-            np.kron(Lk_dag, Lk.conj())
+            np.kron(Lk_dag, Lk.T)
             - 0.5 * np.kron(LdL, I_d)
             - 0.5 * np.kron(I_d, LdL.T)
         )

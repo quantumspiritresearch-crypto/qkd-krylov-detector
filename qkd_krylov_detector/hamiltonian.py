@@ -98,6 +98,13 @@ def build_hamiltonian(N=DEFAULT_N, J=DEFAULT_J, g=DEFAULT_G,
     Source: krylov_dynamic_detector.ipynb Cell 2,
             eve_detection_master_v3.ipynb Cell 3
     """
+    if N < 3:
+        raise ValueError(
+            f"N must be >= 3 (got N={N}). The Hamiltonian requires at least "
+            f"3 qubits: qubits 0-1 for Heisenberg coupling, qubit 2 for "
+            f"kappa-ZZ coupling."
+        )
+
     # Heisenberg coupling on qubits 0-1
     H = J * (get_op(sigmax(), 0, N) * get_op(sigmax(), 1, N)
            + get_op(sigmay(), 0, N) * get_op(sigmay(), 1, N)
